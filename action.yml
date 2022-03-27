@@ -10,6 +10,10 @@ inputs:
   authkey:
     description: 'Your Tailscale authentication key, from the admin panel.'
     required: true
+  exitnode:
+    description: 'Specify an exit node, e.g 12.34.56.78'
+    required: false
+    default: ''
   version:
     description: 'Tailscale version to use.'
     required: true
@@ -43,7 +47,8 @@ runs:
         env:
           TAILSCALE_AUTHKEY: ${{ inputs.authkey }}
           ADDITIONAL_ARGS: ${{ inputs.args }}
+          EXIT_NODE: ${{inputs.exitnode }}
         run: |
           sudo tailscaled 2>~/tailscaled.log &
           HOSTNAME="github-$(cat /etc/hostname)"
-          sudo tailscale up --authkey ${TAILSCALE_AUTHKEY} --hostname=${HOSTNAME} --accept-routes ${ADDITIONAL_ARGS}
+          sudo tailscale up --authkey ${TAILSCALE_AUTHKEY} --hostname=${HOSTNAME} --exit-node=${EXIT_NODE} --accept-routes ${ADDITIONAL_ARGS}
